@@ -9,8 +9,8 @@ public class TennisGame1 implements TennisGame {
     public static String FORTY = "Forty";
     public static String DEUCE = "Deuce";
 
-    private int player1Score = 0;
-    private int player2Score = 0;
+    private int player1Point = 0;
+    private int player2Point = 0;
     private String player1Name;
     private String player2Name;
 
@@ -19,16 +19,48 @@ public class TennisGame1 implements TennisGame {
         this.player2Name = player2Name;
     }
 
+    public void wonPoint(String playerName) {
+        if (Objects.equals(playerName, player1Name))
+            player1Point += 1;
+        else
+            player2Point += 1;
+    }
+
+    public String getScore() {
+        if (isScoreEqual()) {
+            return getScoreWhenEqual(player1Point);
+        }
+        if (isBothScoreIsLessThan4()) {
+            return getScoreWhenBothPointLessThan4(player1Point, player2Point);
+        }
+        return getScoreWhenPointIsNotLessThan4(this);
+    }
+
+    private boolean isScoreEqual() {
+        return player1Point == player2Point;
+    }
+
+    private static String getScoreWhenEqual(int playerPoint) {
+        if (playerPoint < 3) {
+            return getScore(playerPoint) + "-All";
+        }
+        return DEUCE;
+    }
+
+    private boolean isBothScoreIsLessThan4() {
+        return player1Point < 4 && player2Point < 4;
+    }
+
     private static String getScoreWhenPointIsNotLessThan4(TennisGame1 game) {
-        int minusResult = game.player1Score - game.player2Score;
+        int minusResult = game.player1Point - game.player2Point;
         if (minusResult == 1) return "Advantage " + game.player1Name;
         if (minusResult == -1) return "Advantage " + game.player2Name;
         if (minusResult >= 2) return "Win for " + game.player1Name;
         return "Win for " + game.player2Name;
     }
 
-    private static String getScoreWhenBothPointLessThan4(int player1Score, int player2Score) {
-        return getScore(player1Score) + "-" + getScore(player2Score);
+    private static String getScoreWhenBothPointLessThan4(int player1Point, int player2Point) {
+        return getScore(player1Point) + "-" + getScore(player2Point);
     }
 
     private static String getScore(int playerPoint) {
@@ -50,37 +82,5 @@ public class TennisGame1 implements TennisGame {
                 throw new IllegalStateException("Unexpected value: " + playerPoint);
         }
         return score;
-    }
-
-    private static String getScoreWhenEqual(int point) {
-        if (point < 3) {
-            return getScore(point) + "-All";
-        }
-        return DEUCE;
-    }
-
-    public void wonPoint(String playerName) {
-        if (Objects.equals(playerName, player1Name))
-            player1Score += 1;
-        else
-            player2Score += 1;
-    }
-
-    public String getScore() {
-        if (isScoreEqual()) {
-            return getScoreWhenEqual(player1Score);
-        }
-        if (isBothScoreIsLessThan4()) {
-            return getScoreWhenBothPointLessThan4(player1Score, player2Score);
-        }
-        return getScoreWhenPointIsNotLessThan4(this);
-    }
-
-    private boolean isBothScoreIsLessThan4() {
-        return player1Score < 4 && player2Score < 4;
-    }
-
-    private boolean isScoreEqual() {
-        return player1Score == player2Score;
     }
 }
