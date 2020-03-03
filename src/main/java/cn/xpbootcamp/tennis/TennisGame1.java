@@ -3,6 +3,11 @@ package cn.xpbootcamp.tennis;
 import java.util.Objects;
 
 public class TennisGame1 implements TennisGame {
+    public static String LOVE = "Love";
+    public static String FIFTEEN = "Fifteen";
+    public static String THIRTY = "Thirty";
+    public static String FORTY = "Forty";
+    public static String DEUCE = "Deuce";
 
     private int player1Score = 0;
     private int player2Score = 0;
@@ -14,6 +19,46 @@ public class TennisGame1 implements TennisGame {
         this.player2Name = player2Name;
     }
 
+    private static String getScoreWhenPointIsNotLessThan4(TennisGame1 game) {
+        int minusResult = game.player1Score - game.player2Score;
+        if (minusResult == 1) return "Advantage " + game.player1Name;
+        if (minusResult == -1) return "Advantage " + game.player2Name;
+        if (minusResult >= 2) return "Win for " + game.player1Name;
+        return "Win for " + game.player2Name;
+    }
+
+    private static String getScoreWhenBothPointLessThan4(int player1Score, int player2Score) {
+        return getScore(player1Score) + "-" + getScore(player2Score);
+    }
+
+    private static String getScore(int playerPoint) {
+        String score;
+        switch (playerPoint) {
+            case 0:
+                score = LOVE;
+                break;
+            case 1:
+                score = FIFTEEN;
+                break;
+            case 2:
+                score = THIRTY;
+                break;
+            case 3:
+                score = FORTY;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + playerPoint);
+        }
+        return score;
+    }
+
+    private static String getScoreWhenEqual(int point) {
+        if (point < 3) {
+            return getScore(point) + "-All";
+        }
+        return DEUCE;
+    }
+
     public void wonPoint(String playerName) {
         if (Objects.equals(playerName, player1Name))
             player1Score += 1;
@@ -22,53 +67,20 @@ public class TennisGame1 implements TennisGame {
     }
 
     public String getScore() {
-        String score = "";
-        int tempScore;
-        if (player1Score == player2Score) {
-            switch (player1Score) {
-                case 0:
-                    score = "Love-All";
-                    break;
-                case 1:
-                    score = "Fifteen-All";
-                    break;
-                case 2:
-                    score = "Thirty-All";
-                    break;
-                default:
-                    score = "Deuce";
-                    break;
-
-            }
-        } else if (player1Score >= 4 || player2Score >= 4) {
-            int minusResult = player1Score - player2Score;
-            if (minusResult == 1) score = "Advantage player1";
-            else if (minusResult == -1) score = "Advantage player2";
-            else if (minusResult >= 2) score = "Win for player1";
-            else score = "Win for player2";
-        } else {
-            for (int i = 1; i < 3; i++) {
-                if (i == 1) tempScore = player1Score;
-                else {
-                    score += "-";
-                    tempScore = player2Score;
-                }
-                switch (tempScore) {
-                    case 0:
-                        score += "Love";
-                        break;
-                    case 1:
-                        score += "Fifteen";
-                        break;
-                    case 2:
-                        score += "Thirty";
-                        break;
-                    case 3:
-                        score += "Forty";
-                        break;
-                }
-            }
+        if (isScoreEqual()) {
+            return getScoreWhenEqual(player1Score);
         }
-        return score;
+        if (isBothScoreIsLessThan4()) {
+            return getScoreWhenBothPointLessThan4(player1Score, player2Score);
+        }
+        return getScoreWhenPointIsNotLessThan4(this);
+    }
+
+    private boolean isBothScoreIsLessThan4() {
+        return player1Score < 4 && player2Score < 4;
+    }
+
+    private boolean isScoreEqual() {
+        return player1Score == player2Score;
     }
 }
