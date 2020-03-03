@@ -15,7 +15,7 @@ public class TennisGame1 implements TennisGame {
     }
 
     public void wonPoint(String playerName) {
-        if (Objects.equals(playerName, "player1"))
+        if (Objects.equals(playerName, player1Name))
             mScore1 += 1;
         else
             mScore2 += 1;
@@ -23,7 +23,7 @@ public class TennisGame1 implements TennisGame {
 
     public String getScore() {
         String score = "";
-        int tempScore = 0;
+        int tempScore;
         if (mScore1 == mScore2) {
             switch (mScore1) {
                 case 0:
